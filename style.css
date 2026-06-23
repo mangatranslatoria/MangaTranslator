@@ -98,3 +98,6 @@
   .hero h1{font-size:36px;}
   .gallery-card{flex-basis:84vw;height:68vw;min-height:260px;}
 }
+
+/* Fix gallery messages */
+.gallery-notice{flex:0 0 100%;padding:14px 18px;border:1px solid rgba(35,136,255,.35);border-radius:12px;background:rgba(35,136,255,.08);color:#c8d6ef;font-size:15px;line-height:1.45;margin-bottom:8px}
