@@ -1,8 +1,11 @@
-/* Manga Translator Studio - fixed gallery for GitHub Pages
-   Put images here, all lowercase paths:
-   assets/gallery/italian/01.jpg
-   assets/gallery/italian/02.jpg
-   ...
+/* Manga Translator Studio - mobile-safe gallery
+   Thumbnail path:
+   assets/gallery_preview/thumbs/italian/01.jpg
+
+   Full image path:
+   assets/gallery_preview/full/italian/01.jpg
+
+   Same folder names and file names in thumbs/ and full/.
    GitHub Pages is case-sensitive: 01.JPG is NOT 01.jpg.
 */
 
@@ -78,19 +81,25 @@ function imageExists(src) {
   });
 }
 
-function imagePath(folder, fileName) {
-  return `assets/gallery/${folder}/${fileName}`;
+function thumbPath(folder, fileName) {
+  return `assets/gallery_preview/thumbs/${folder}/${fileName}`;
+}
+
+function fullPath(folder, fileName) {
+  return `assets/gallery_preview/full/${folder}/${fileName}`;
 }
 
 async function existingGalleryImages(folder) {
   const files = GALLERY_IMAGES[folder] || DEFAULT_GALLERY_FILES;
+
+  // Check only thumbnails. Full images are loaded only when the user opens the lightbox.
   const checks = files.map(async (fileName, index) => {
-    const src = imagePath(folder, fileName);
-    const ok = await imageExists(src);
+    const thumb = thumbPath(folder, fileName);
+    const ok = await imageExists(thumb);
     if (!ok) return null;
     return {
       thumb: ok,
-      full: ok,
+      full: fullPath(folder, fileName),
       label: fileName.replace(/\.[^.]+$/, ''),
       order: index + 1
     };
@@ -247,9 +256,9 @@ async function renderGallery() {
       'empty',
       `Galleria vuota.<br>
        Carica le immagini in:<br>
-       <b>assets/gallery/${folder}/01.jpg</b><br>
-       <b>assets/gallery/${folder}/02.jpg</b><br>
-       <b>assets/gallery/${folder}/03.jpg</b><br><br>
+       <b>assets/gallery_preview/thumbs/${folder}/01.jpg</b><br>
+       <b>assets/gallery_preview/thumbs/${folder}/02.jpg</b><br>
+       <b>assets/gallery_preview/thumbs/${folder}/03.jpg</b><br><br>
        Usa nomi minuscoli. GitHub Pages distingue maiuscole/minuscole.`
     );
     return;
@@ -261,7 +270,7 @@ async function renderGallery() {
   if (folder !== usedFolder) {
     const notice = document.createElement('div');
     notice.className = 'gallery-notice';
-    notice.innerHTML = `Nessuna immagine trovata in <b>assets/gallery/${folder}/</b>. Mostro fallback <b>${usedFolder}</b>.`;
+    notice.innerHTML = `Nessuna immagine trovata in <b>assets/gallery_preview/thumbs/${folder}/</b>. Mostro fallback <b>${usedFolder}</b>.`;
     wrap.appendChild(notice);
   }
 
