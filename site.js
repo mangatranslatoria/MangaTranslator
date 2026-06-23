@@ -10,6 +10,23 @@ function getLangData(code){ return LANGUAGES.find(l=>l[0]===code) || LANGUAGES[0
 function folderForLang(code){ return getLangData(code)[3] || 'english'; }
 function langName(code){ return getLangData(code)[2] || getLangData(code)[1]; }
 function t(key){ return (TRANSLATIONS[activeLang] && TRANSLATIONS[activeLang][key]) || TRANSLATIONS.en[key] || key; }
+function appPreviewCandidates(folder){
+  const exts=['webp','png','jpg','jpeg'];
+  const names=[folder, activeLang, 'app-preview'];
+  let arr=[];
+  names.forEach(name=>exts.forEach(ext=>arr.push(`assets/app/${name}.${ext}`)));
+  return arr;
+}
+async function updateAppPreview(){
+  const img=document.getElementById('appPreviewImage');
+  if(!img) return;
+  const folder=folderForLang(activeLang);
+  for(const src of appPreviewCandidates(folder)){
+    const ok=await imageExists(src);
+    if(ok){ img.src=ok; return; }
+  }
+  img.src='assets/app/app-preview.png';
+}
 
 function applyLanguage(){
   document.documentElement.lang = activeLang;
@@ -19,6 +36,7 @@ function applyLanguage(){
     if(val.includes('<span>')) el.innerHTML = val; else el.textContent = val;
   });
   document.getElementById('galleryPairLabel').textContent = `${SOURCE_LABEL} → ${langName(activeLang)}`;
+  updateAppPreview();
   localStorage.setItem('mts_lang', activeLang);
   renderGallery();
 }
@@ -42,10 +60,10 @@ async function renderGallery(){
   wrap.innerHTML=''; currentImages=images.map(x=>x.full);
   if(images.length===0){ wrap.innerHTML=`<div class="gallery-empty">Galleria vuota.<br>Metti le immagini in <b>assets/gallery/${folder}/01.jpg</b>, <b>02.jpg</b>, <b>03.jpg</b>...<br>Supportati: jpg, jpeg, png, webp.</div>`; return; }
   images.forEach((img,index)=>{ const n=String(img.n).padStart(2,'0'); const card=document.createElement('button'); card.className='gallery-card'; card.type='button'; card.innerHTML=`<img loading="lazy" src="${img.thumb}" alt="${langName(activeLang)} translation ${n}"><span>${SOURCE_LABEL} → ${langName(activeLang)} · ${n}</span>`; card.addEventListener('click',()=>openLightbox(index)); wrap.appendChild(card); });
-  const pages=Math.ceil(images.length/6); for(let i=0;i<Math.max(1,pages);i++){ const b=document.createElement('button'); if(i===0)b.classList.add('active'); b.addEventListener('click',()=>scrollGalleryPage(i)); dots.appendChild(b); }
+  const pages=Math.ceil(images.length/1); for(let i=0;i<Math.max(1,pages);i++){ const b=document.createElement('button'); if(i===0)b.classList.add('active'); b.addEventListener('click',()=>scrollGalleryPage(i)); dots.appendChild(b); }
 }
-function scrollGalleryPage(page){ const wrap=document.getElementById('translationGallery'); wrap.scrollTo({left: page * wrap.clientWidth * .86, behavior:'smooth'}); document.querySelectorAll('#galleryDots button').forEach((b,i)=>b.classList.toggle('active',i===page)); }
-function galleryMove(dir){ const wrap=document.getElementById('translationGallery'); const max=Math.max(0,wrap.scrollWidth-wrap.clientWidth); const next=Math.min(max,Math.max(0,wrap.scrollLeft + dir * wrap.clientWidth * .78)); wrap.scrollTo({left:next,behavior:'smooth'}); }
+function scrollGalleryPage(page){ const wrap=document.getElementById('translationGallery'); wrap.scrollTo({left: page * wrap.clientWidth * .98, behavior:'smooth'}); document.querySelectorAll('#galleryDots button').forEach((b,i)=>b.classList.toggle('active',i===page)); }
+function galleryMove(dir){ const wrap=document.getElementById('translationGallery'); const max=Math.max(0,wrap.scrollWidth-wrap.clientWidth); const next=Math.min(max,Math.max(0,wrap.scrollLeft + dir * wrap.clientWidth * .98)); wrap.scrollTo({left:next,behavior:'smooth'}); }
 function openLightbox(i){ if(!currentImages.length)return; currentIndex=i; updateLightbox(); const lb=document.getElementById('lightbox'); lb.classList.add('active'); lb.setAttribute('aria-hidden','false'); }
 function updateLightbox(){ document.getElementById('lightboxImage').src=currentImages[currentIndex]; document.getElementById('lightboxCounter').textContent=`${currentIndex+1} / ${currentImages.length} · ${SOURCE_LABEL} → ${langName(activeLang)}`; }
 function closeLightbox(){ const lb=document.getElementById('lightbox'); lb.classList.remove('active'); lb.setAttribute('aria-hidden','true'); document.getElementById('lightboxImage').src=''; }
