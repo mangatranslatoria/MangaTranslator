@@ -13,11 +13,11 @@ const GALLERY_FALLBACK_FOLDER = 'english';
 // It checks only these files for the selected language.
 // Add/remove names here if you have more or fewer gallery images.
 const DEFAULT_GALLERY_FILES = [
-  '01.jpg', '02.jpg', '03.jpg', '04.jpg', '05.jpg',
-  '06.jpg', '07.jpg', '08.jpg', '09.jpg', '10.jpg',
-  '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg',
-  '16.jpg', '17.jpg', '18.jpg', '19.jpg', '20.jpg'
+  '01.jpg', '02.jpg', '03.jpg', '04.jpg',
+  '05.jpg', '06.jpg', '07.jpg', '08.jpg'
 ];
+// If you add more preview images, extend the list above:
+// '09.jpg', '10.jpg', '11.jpg', ...
 
 // Use the same file names for every language folder by default.
 // If one language has different file names, override it here.
@@ -45,7 +45,7 @@ const GALLERY_IMAGES = {
   bengali: DEFAULT_GALLERY_FILES
 };
 
-let activeLang = localStorage.getItem('mts_lang') || 'it';
+let activeLang = localStorage.getItem('mts_lang') || 'en';
 let currentImages = [];
 let currentIndex = 0;
 let renderToken = 0;
@@ -100,6 +100,46 @@ async function existingGalleryImages(folder) {
   return results.filter(Boolean);
 }
 
+
+function heroShotCandidates(n) {
+  const id = String(n).padStart(2, '0');
+  return [
+    `assets/app/screen-${id}.webp`,
+    `assets/app/screen-${id}.png`,
+    `assets/app/screen-${id}.jpg`,
+    `assets/app/screenshot-${id}.webp`,
+    `assets/app/screenshot-${id}.png`,
+    `assets/app/screenshot-${id}.jpg`
+  ];
+}
+
+async function updateHeroShots() {
+  const box = document.getElementById('heroShots');
+  if (!box) return;
+  box.innerHTML = '';
+  for (let i = 1; i <= 3; i++) {
+    let found = null;
+    for (const src of heroShotCandidates(i)) {
+      const ok = await imageExists(src);
+      if (ok) { found = ok; break; }
+    }
+    if (found) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'hero-shot';
+      btn.innerHTML = `<img src="${found}" alt="Manga Translator Studio screenshot ${i}">`;
+      btn.addEventListener('click', () => {
+        currentImages = [found];
+        currentIndex = 0;
+        updateLightbox();
+        const lb = document.getElementById('lightbox');
+        if (lb) { lb.classList.add('active'); lb.setAttribute('aria-hidden', 'false'); }
+      });
+      box.appendChild(btn);
+    }
+  }
+}
+
 function appPreviewCandidates(folder) {
   return [
     `assets/app/${folder}.webp`,
@@ -148,6 +188,7 @@ function applyLanguage() {
 
   localStorage.setItem('mts_lang', activeLang);
   updateAppPreview();
+  updateHeroShots();
   renderGallery();
 }
 
@@ -163,7 +204,7 @@ function setupLanguageSelect() {
     select.appendChild(opt);
   });
 
-  if (!LANGUAGES.some(l => l[0] === activeLang)) activeLang = 'it';
+  if (!LANGUAGES.some(l => l[0] === activeLang)) activeLang = 'en';
   select.value = activeLang;
 
   select.addEventListener('change', () => {
