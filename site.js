@@ -71,6 +71,13 @@ function t(key) {
          key;
 }
 
+
+function galleryPairText(code) {
+  if (code === 'en') return 'Japanese → English';
+  if (code === 'ja') return 'English → Japanese';
+  return `${SOURCE_LABEL} → ${langName(code)}`;
+}
+
 function imageExists(src) {
   return new Promise(resolve => {
     const img = new Image();
@@ -193,7 +200,7 @@ function applyLanguage() {
   });
 
   const pair = document.getElementById('galleryPairLabel');
-  if (pair) pair.textContent = `${SOURCE_LABEL} → ${langName(activeLang)}`;
+  if (pair) pair.textContent = galleryPairText(activeLang);
 
   localStorage.setItem('mts_lang', activeLang);
   updateAppPreview();
@@ -280,7 +287,7 @@ async function renderGallery() {
     card.type = 'button';
     card.innerHTML = `
       <img loading="lazy" src="${img.thumb}" alt="${langName(activeLang)} translation ${img.label}">
-      <span>${SOURCE_LABEL} → ${langName(activeLang)} · ${img.label}</span>
+      <span>${galleryPairText(activeLang)} · ${img.label}</span>
     `;
     card.addEventListener('click', () => openLightbox(index));
     wrap.appendChild(card);
@@ -336,7 +343,7 @@ function updateLightbox() {
   const img = document.getElementById('lightboxImage');
   const counter = document.getElementById('lightboxCounter');
   if (img) img.src = currentImages[currentIndex];
-  if (counter) counter.textContent = `${currentIndex + 1} / ${currentImages.length} · ${SOURCE_LABEL} → ${langName(activeLang)}`;
+  if (counter) counter.textContent = `${currentIndex + 1} / ${currentImages.length} · ${galleryPairText(activeLang)}`;
 }
 
 function closeLightbox() {

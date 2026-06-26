@@ -147,3 +147,55 @@
 .gallery-card span{font-size:17px;padding:46px 16px 14px}
 .language-select{font-size:16px}
 @media(max-width:900px){.gallery-card{flex-basis:88vw!important;height:440px!important}.hero-shots{grid-template-columns:1fr}.hero-shot img{height:140px}}
+
+/* v16: PNG logo + corrected app preview frame */
+.brand-logo{
+  width:98px;
+  height:98px;
+  object-fit:contain;
+  flex:0 0 auto;
+  border-radius:12px;
+}
+.brand-mark{display:none!important;}
+
+.app-frame{
+  width:100%;
+  max-width:1680px;
+  aspect-ratio:2048/1311;
+  padding:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.app-frame > img#appPreviewImage{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  border-radius:16px;
+  background:#1f2024;
+}
+
+/* New app screenshot is wide: give the hero more room on desktop */
+@media(min-width:1201px){
+  .hero{
+    grid-template-columns:.72fr 1.28fr;
+    gap:44px;
+    align-items:center;
+  }
+  .app-frame{justify-self:end;}
+}
+@media(min-width:2560px){
+  .app-frame{max-width:2100px;}
+}
+@media(max-width:1200px){
+  .app-frame{
+    max-width:1100px;
+    justify-self:center;
+  }
+}
+@media(max-width:768px){
+  .brand-logo{width:90px;height:90px;}
+  .app-frame{padding:7px;border-radius:18px;}
+  .app-frame > img#appPreviewImage{border-radius:12px;}
+}
