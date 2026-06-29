@@ -3,7 +3,7 @@ Manga Translator Studio Site v23 Release Candidate
 Main changes:
 - New hero focused on Local AI.
 - Bigger visible benefit list:
-  100% Offline, 55 Translation Languages, Interface in 20 Languages, Works on CPU, Lifetime License Available.
+  100% Offline, 200+ Translation Languages, Interface in 20 Languages, Works on CPU, Lifetime License Available.
 - Pricing moved higher: after gallery/examples.
 - Footer reorganized: Product, Resources, Legal, Support.
 - Added User Guide page: user-guide.html.
